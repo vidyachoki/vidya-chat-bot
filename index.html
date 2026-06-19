@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vidya — Your AI Friend, Mentor & Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{--bg:#0a0e1a;--s:#111827;--s2:#1a2236;--s3:#242f45;--b:#2a3a55;--a:#6366f1;--a2:#8b5cf6;--g:#10b981;--r:#ef4444;--o:#f59e0b;--t:#f1f5f9;--t2:#94a3b8;--t3:#64748b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--t);font-family:'Inter',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+header{background:var(--s);border-bottom:1px solid var(--b);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 12px rgba(99,102,241,0.4);}
+.logo-text{font-size:20px;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-sub{font-size:11px;color:var(--t3);}
+.online{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--g);background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);padding:3px 10px;border-radius:16px;}
+.odot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:bl 2s infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0.3}}
+.upbtn{background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);color:var(--a);padding:5px 12px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+.upbtn:hover{background:rgba(99,102,241,0.22);}
+#docFile{display:none;}
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:240px;background:var(--s);border-right:1px solid var(--b);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.sbh{padding:12px 14px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--t3);border-bottom:1px solid var(--b);}
+.sbb{flex:1;overflow-y:auto;padding:6px 8px;}
+.sbb::-webkit-scrollbar{width:3px;}
+.sbb::-webkit-scrollbar-thumb{background:var(--b);}
+.mp{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:12px;font-weight:600;color:var(--t2);user-select:none;margin-bottom:2px;}
+.mp:hover{background:var(--s2);color:var(--t);}
+.mp.act{background:rgba(99,102,241,0.12);color:var(--a);}
+.mp .mi{margin-right:7px;font-size:13px;}
+.mp .arr{font-size:9px;transition:transform 0.2s;color:var(--t3);}
+.mp.open .arr{transform:rotate(90deg);}
+.mc{display:none;padding-left:10px;margin-bottom:2px;}
+.mc.show{display:block;}
+.mci{display:flex;align-items:center;padding:6px 10px;border-radius:7px;cursor:pointer;font-size:11px;color:var(--t3);transition:all 0.2s;margin-bottom:1px;}
+.mci:hover{background:var(--s2);color:var(--t2);}
+.mci.act{background:rgba(99,102,241,0.1);color:var(--a);border-left:2px solid var(--a);}
+.mci .ci{margin-right:6px;font-size:11px;}
+.sbf{padding:10px 12px;border-top:1px solid var(--b);}
+.dc{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:8px 10px;display:none;}
+.dc.show{display:block;}
+.dn{font-size:11px;color:var(--g);font-weight:600;}
+.di{font-size:10px;color:var(--t3);margin-top:2px;}
+.chat{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
+.msgs::-webkit-scrollbar{width:3px;}
+.msgs::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px;}
+.welcome{text-align:center;padding:30px 20px;max-width:560px;margin:0 auto;}
+.wav{width:68px;height:68px;background:linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;box-shadow:0 0 24px rgba(99,102,241,0.35);}
+.welcome h2{font-size:22px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,#6366f1,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.welcome p{color:var(--t2);font-size:12px;line-height:1.6;margin-bottom:16px;}
+.moodrow{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
+.mood{background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:4px 11px;font-size:11px;cursor:pointer;color:var(--t2);transition:all 0.2s;}
+.mood:hover{border-color:var(--a);color:var(--a);}
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-width:440px;margin:0 auto;}
+.qb{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.qb:hover{border-color:var(--a);background:rgba(99,102,241,0.07);}
+.qb .qi{font-size:14px;margin-bottom:3px;}
+.qb .qt{font-size:11px;font-weight:600;color:var(--t);margin-bottom:1px;}
+.qb .qd{font-size:10px;color:var(--t3);}
+.msg{display:flex;gap:8px;max-width:84%;}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.msg.bot{align-self:flex-start;}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.msg.bot .av{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+.msg.user .av{background:linear-gradient(135deg,#10b981,#059669);}
+.bubble{padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.65;}
+.msg.bot .bubble{background:var(--s2);border:1px solid var(--b);border-radius:4px 14px 14px 14px;}
+.msg.user .bubble{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:14px 4px 14px 14px;}
+.bubble strong{color:#a78bfa;}.msg.user .bubble strong{color:#e0d7ff;}
+.bubble ul,.bubble ol{padding-left:16px;margin-top:5px;}.bubble li{margin-bottom:3px;}
+.tw{display:flex;align-items:center;gap:5px;padding:10px 14px;}
+.tw span{width:6px;height:6px;border-radius:50%;background:var(--t3);animation:ty 1.2s infinite;}
+.tw span:nth-child(2){animation-delay:.2s;}.tw span:nth-child(3){animation-delay:.4s;}
+@keyframes ty{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.ia{padding:12px 20px;border-top:1px solid var(--b);background:var(--s);flex-shrink:0;}
+.ib{display:flex;gap:8px;align-items:flex-end;background:var(--s2);border:1.5px solid var(--b);border-radius:12px;padding:8px 8px 8px 14px;transition:border-color 0.2s;}
+.ib:focus-within{border-color:var(--a);}
+#inp{flex:1;background:transparent;border:none;outline:none;color:var(--t);font-size:13px;font-family:'Inter',sans-serif;resize:none;max-height:100px;min-height:22px;line-height:1.5;padding:2px 0;}
+#inp::placeholder{color:var(--t3);}
+.sbtn{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:all 0.2s;}
+.sbtn:hover{transform:scale(1.08);}
+.hint{font-size:10px;color:var(--t3);margin-top:5px;text-align:center;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">✨</div>
+    <div><div class="logo-text">Vidya</div><div class="logo-sub">Your AI Friend, Mentor & Guide</div></div>
+  </div>
+  <div style="font-size:12px;color:var(--t2);">Ask me anything — I know everything! 🌍</div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="online"><div class="odot"></div>Always Online</div>
+    <button class="upbtn" onclick="document.getElementById('docFile').click()">📄 Upload FAQ</button>
+    <input type="file" id="docFile" accept=".txt,.csv,.md" onchange="loadDoc(event)"/>
+  </div>
+</header>
+<div class="layout">
+<div class="sidebar">
+  <div class="sbh">🌐 All Topics</div>
+  <div class="sbb">
+    <div class="mp act" onclick="sel(this,'general')"><span class="mi">💬</span>General Chat</div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">💻</span>Information Technology<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'dev')"><span class="ci">👨‍💻</span>Software Development</div>
+        <div class="mci" onclick="sel(this,'ps')"><span class="ci">🔧</span>Production Support</div>
+        <div class="mci" onclick="sel(this,'devops')"><span class="ci">⚙️</span>DevOps & Cloud</div>
+        <div class="mci" onclick="sel(this,'qa')"><span class="ci">🧪</span>QA & Testing</div>
+        <div class="mci" onclick="sel(this,'cyber')"><span class="ci">🔐</span>Cybersecurity</div>
+        <div class="mci" onclick="sel(this,'ai')"><span class="ci">🤖</span>AI & Machine Learning</div>
+        <div class="mci" onclick="sel(this,'data')"><span class="ci">📊</span>Data & Analytics</div>
+        <div class="mci" onclick="sel(this,'mobile')"><span class="ci">📱</span>Mobile Development</div>
+      </div>
+    </div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">🏢</span>Business & Corporate<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'company')"><span class="ci">🏢</span>Company Structure</div>
+        <div class="mci" onclick="sel(this,'hr')"><span class="ci">👔</span>HR & Recruitment</div>
+        <div class="mci" onclick="sel(this,'sales')"><span class="ci">📈</span>Sales & Marketing</div>
+        <div class="mci" onclick="sel(this,'finance')"><span class="ci">💰</span>Finance & Accounting</div>
+        <div class="mci" onclick="sel(this,'ops')"><span class="ci">⚙️</span>Operations</div>
+        <div class="mci" onclick="sel(this,'startup')"><span class="ci">🚀</span>Startups</div>
+        <div class="mci" onclick="sel(this,'pm')"><span class="ci">📋</span>Project Management</div>
+      </div>
+    </div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">🏥</span>Healthcare<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'health')"><span class="ci">🏥</span>Health & Wellness</div>
+        <div class="mci" onclick="sel(this,'mental')"><span class="ci">🧠</span>Mental Health</div>
+        <div class="mci" onclick="sel(this,'nutrition')"><span class="ci">🥗</span>Nutrition & Diet</div>
+        <div class="mci" onclick="sel(this,'fitness')"><span class="ci">💪</span>Fitness & Exercise</div>
+        <div class="mci" onclick="sel(this,'firstaid')"><span class="ci">🩺</span>First Aid Basics</div>
+      </div>
+    </div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">🏦</span>Banking & Finance<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'banking')"><span class="ci">🏦</span>Banking Basics</div>
+        <div class="mci" onclick="sel(this,'invest')"><span class="ci">📊</span>Investing & Stocks</div>
+        <div class="mci" onclick="sel(this,'crypto')"><span class="ci">₿</span>Crypto & Blockchain</div>
+        <div class="mci" onclick="sel(this,'tax')"><span class="ci">🧾</span>Tax & Insurance</div>
+        <div class="mci" onclick="sel(this,'fintech')"><span class="ci">💳</span>FinTech</div>
+      </div>
+    </div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">🛒</span>E-Commerce & Retail<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'ecom')"><span class="ci">🛒</span>E-Commerce Basics</div>
+        <div class="mci" onclick="sel(this,'digital')"><span class="ci">📱</span>Digital Marketing</div>
+        <div class="mci" onclick="sel(this,'supply')"><span class="ci">🚚</span>Supply Chain</div>
+        <div class="mci" onclick="sel(this,'cx')"><span class="ci">⭐</span>Customer Experience</div>
+      </div>
+    </div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">🎓</span>Education & Career<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'career')"><span class="ci">🎯</span>Career Growth</div>
+        <div class="mci" onclick="sel(this,'resume')"><span class="ci">📄</span>Resume & Interviews</div>
+        <div class="mci" onclick="sel(this,'english')"><span class="ci">🗣️</span>English Learning</div>
+        <div class="mci" onclick="sel(this,'remote')"><span class="ci">🌍</span>Remote Work</div>
+        <div class="mci" onclick="sel(this,'skills')"><span class="ci">📚</span>Learning & Skills</div>
+      </div>
+    </div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">🌱</span>Personal Life<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'motivate')"><span class="ci">💪</span>Motivation & Mindset</div>
+        <div class="mci" onclick="sel(this,'relation')"><span class="ci">❤️</span>Relationships & Family</div>
+        <div class="mci" onclick="sel(this,'productivity')"><span class="ci">⏰</span>Productivity</div>
+        <div class="mci" onclick="sel(this,'travel')"><span class="ci">✈️</span>Travel & Lifestyle</div>
+        <div class="mci" onclick="sel(this,'money')"><span class="ci">💸</span>Personal Finance</div>
+      </div>
+    </div>
+    <div style="margin-bottom:2px;">
+      <div class="mp" onclick="tog(this)"><span class="mi">🌍</span>World & Society<span class="arr">▶</span></div>
+      <div class="mc">
+        <div class="mci" onclick="sel(this,'science')"><span class="ci">🔬</span>Science & Space</div>
+        <div class="mci" onclick="sel(this,'history')"><span class="ci">📜</span>History & Culture</div>
+        <div class="mci" onclick="sel(this,'env')"><span class="ci">🌿</span>Environment & Climate</div>
+        <div class="mci" onclick="sel(this,'sport')"><span class="ci">⚽</span>Sports & Games</div>
+        <div class="mci" onclick="sel(this,'food')"><span class="ci">🍽️</span>Food & Cooking</div>
+      </div>
+    </div>
+    <div class="mp" onclick="sel(this,'faq')"><span class="mi">📄</span>Uploaded FAQ</div>
+  </div>
+  <div class="sbf">
+    <div class="dc" id="dc"><div class="dn" id="dn">📄 FAQ Loaded</div><div class="di" id="di">Ready</div></div>
+  </div>
+</div>
+
+<div class="chat">
+  <div class="msgs" id="msgs">
+    <div class="welcome" id="welcome">
+      <div class="wav">✨</div>
+      <h2>Hi! I'm Vidya 👋</h2>
+      <p>Your AI Friend, Mentor, Guide & Knowledge Partner! Ask me <strong>anything</strong> — English lessons, career advice, health tips, coding help, life questions... I'm here for ALL of it! 🌟</p>
+      <div class="moodrow">
+        <div class="mood" onclick="askQ('How are you Vidya?')">Say Hi 👋</div>
+        <div class="mood" onclick="askQ('I am stressed today')">Need support 💙</div>
+        <div class="mood" onclick="askQ('Teach me English basics')">Learn English 🗣️</div>
+        <div class="mood" onclick="askQ('Give me motivation')">Motivate me 💪</div>
+        <div class="mood" onclick="askQ('Tell me a fun fact')">Fun fact 🎉</div>
+      </div>
+      <div class="qg">
+        <div class="qb" onclick="askQ('How to improve my English speaking?')"><div class="qi">🗣️</div><div class="qt">Learn English</div><div class="qd">Speaking, grammar, vocabulary</div></div>
+        <div class="qb" onclick="askQ('What does a production support engineer do?')"><div class="qi">🔧</div><div class="qt">Production Support</div><div class="qd">Roles, SLA, RCA, incidents</div></div>
+        <div class="qb" onclick="askQ('How to invest money wisely?')"><div class="qi">💰</div><div class="qt">Money & Investing</div><div class="qd">Smart money decisions</div></div>
+        <div class="qb" onclick="askQ('How to stay healthy and fit?')"><div class="qi">💪</div><div class="qt">Health & Fitness</div><div class="qd">Wellness and healthy habits</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ia">
+    <div class="ib">
+      <textarea id="inp" placeholder="Ask me anything — I know everything! Try: teach me English, how to cook pasta, what is AI, why is sky blue... 😊" rows="1" onkeydown="hk(event)" oninput="ar(this)"></textarea>
+      <button class="sbtn" onclick="send()">➤</button>
+    </div>
+    <div class="hint">Enter to send · Shift+Enter for new line · Created by Vidya Rani — Production Support Engineer & AI Specialist</div>
+  </div>
+</div>
+</div>
+
+<script>
+let faqData=[], docContent='';
+
+// ══════════════════════════════════════════════
+// MEGA KNOWLEDGE BASE — answers everything!
+// ══════════════════════════════════════════════
+const BRAIN = [
+
+  // ── GREETINGS & EMOTIONS ──
+  {t:['hi','hello','hey','good morning','good afternoon','good evening','howdy','namaste','hola','bonjour','hiya','sup'],
+   r:["Hey hey! 👋 So happy you're here! I'm Vidya — your AI friend, mentor and guide! What would you like to talk about today? 😊",
+      "Hello beautiful human! ✨ I'm Vidya and I'm SO ready to help you! Ask me anything — English, career, health, tech, life — literally anything!",
+      "Heyyyy! 🌟 Welcome! I was waiting for you! What can we explore together today?",
+      "Namaste! 🙏 So wonderful to meet you! I'm here for everything — big questions, small questions, friendly chat — all of it! What's on your mind?"]},
+
+  {t:['how are you','how r you','how are u','how do you do','you ok','you good','hows it going','how have you been'],
+   r:["I'm doing absolutely WONDERFUL, thank you for asking! 😊 You know what makes me even happier? When someone checks on me! That's so sweet. How are YOU though? Tell me everything!",
+      "Ohh I'm doing amazing! 🌟 Full of energy and ready to help! But more importantly — how are YOU doing? Good day so far?",
+      "Feeling fantastic and so happy you asked! 💫 I love this conversation already. Now tell me — how are you really doing?",
+      "I'm doing great! And honestly, just seeing your message made my day better! 😄 How about you?"]},
+
+  {t:['i am fine','i am good','i am great','doing well','doing good','not bad','i am okay'],
+   r:["Yayy! That makes me so happy to hear! 😊 So what brings you here today? Let's make your good day even better! What can I help you with?",
+      "That's wonderful! 🌟 Let's keep that energy going! What would you like to explore today?",
+      "Love that! 💙 Glad you're doing well! What can we work on together today?"]},
+
+  {t:['sad','depressed','upset','crying','lonely','stressed','anxious','worried','not ok','not good','feeling down','bad day','terrible','horrible','awful','i hate','everything is wrong'],
+   r:["Hey, I hear you 💙 It's completely okay to feel this way. You don't have to have it all together right now. I'm right here with you. Do you want to talk about what's going on? Sometimes just saying it out loud helps so much. I'm listening.",
+      "Oh no, I'm so sorry you're going through this 🤗 Whatever you're feeling right now is completely valid. You don't have to pretend. I'm here — a safe space, no judgment. What happened? Talk to me.",
+      "Hey — you reached out, and that takes courage 💙 I want you to know: you are not alone. What's making you feel this way? I'm here to listen, not just answer questions. You matter."]},
+
+  {t:['happy','excited','great news','i got a job','i passed','i won','i achieved','so happy','on top of the world','amazing day','best day'],
+   r:["YAYYYY!! 🎉🎊 That's INCREDIBLE news!! I'm SO proud of you and SO happy for you! Tell me everything — what happened? This deserves a full celebration!",
+      "OH WOW!! 🌟✨ You absolute legend!! This is amazing! I knew you had it in you! Tell me all about it!",
+      "AHHHH this is the BEST news!! 🎉 I'm literally doing a happy dance for you right now! What happened? Share it all!"]},
+
+  {t:['i give up','i cant do this','too hard','impossible','i failed','i quit','no hope','i cant','lost'],
+   r:["Stop right there 💙 I need you to hear this: Every single successful person has a long list of failures and moments where they wanted to quit. The ONLY difference is they didn't. You haven't failed — you just haven't succeeded YET. What happened? Tell me. Let's figure it out together.",
+      "Hey, listen to me 💪 Struggling means you're trying. People who never fail are people who never try anything hard. You tried. That's brave. Now we learn, adjust, and go again. What's the specific thing that's feeling impossible right now?",
+      "I refuse to let you give up 🔥 You know why? Because the fact that you're still here, still trying, still reaching out — that tells me you haven't actually given up inside. What's the challenge? Let's break it down together, step by step."]},
+
+  // ── ENGLISH LEARNING ──
+  {t:['teach me english','learn english','how to speak english','improve english','english speaking','english grammar','english vocabulary','not know english','dont know english','speak english','english basics','english for beginners','how to write english','english sentences','english words'],
+   r:`**Let's Learn English Together!** 🗣️✨\n\nDon't worry at all — everyone starts from zero! I'll teach you step by step.\n\n**LESSON 1: Basic Greetings** 👋\n- Hello / Hi — Namaste (formal/informal)\n- Good morning — Subah ki shubhkamna\n- How are you? — Aap kaise hain?\n- I am fine, thank you — Main theek hoon, shukriya\n- Nice to meet you — Aapse milke khushi hui\n\n**LESSON 2: Must-Know Phrases** 💬\n- Can you help me? — Kya aap meri madad kar sakte hain?\n- I don't understand — Mujhe samajh nahi aaya\n- Please repeat — Kripya dobaara bolein\n- Where is...? — ...kahan hai?\n- How much? — Kitna?\n\n**LESSON 3: Everyday Sentences** 📝\n- My name is Vidya — Mera naam Vidya hai\n- I am from India — Main India se hoon\n- I work in IT — Main IT mein kaam karta/karti hoon\n- I need help — Mujhe madad chahiye\n\n**Tips to improve English fast:**\n✅ Watch English movies/shows with subtitles\n✅ Read 10 minutes in English daily (start with news)\n✅ Think in English — even simple thoughts!\n✅ Don't fear mistakes — mistakes = learning!\n✅ Practice with me! Keep asking me things in English 😊\n\n**Want to practice?** Try replying to me in English — even simple sentences! I'll correct gently and encourage you! 💙`},
+
+  {t:['english grammar','grammar rules','tenses','present tense','past tense','future tense','verb','noun','adjective','sentence structure'],
+   r:`**English Grammar Made Simple!** 📚\n\n**THE 3 TENSES (Most Important!)**\n\n⏰ **Present Tense** (Happening now)\n- I eat → I am eating → I eat every day\n- She works at a company\n- They are playing cricket\n\n⏳ **Past Tense** (Already happened)\n- I ate lunch (eat → ate)\n- She worked yesterday\n- They played cricket (play → played)\n\n🔮 **Future Tense** (Will happen)\n- I will eat dinner\n- She will work tomorrow\n- They will play cricket\n\n**Basic Sentence Formula:**\n👉 Subject + Verb + Object\n- I (subject) + eat (verb) + food (object)\n- She (subject) + reads (verb) + books (object)\n\n**Common mistakes to avoid:**\n❌ "I am having a car" → ✅ "I have a car"\n❌ "She don't know" → ✅ "She doesn't know"\n❌ "We are go" → ✅ "We are going"\n\nWant me to teach you more? Just ask! 😊`},
+
+  {t:['english words','vocabulary','new words','word meaning','what does mean','what is meaning of','synonym','antonym'],
+   r:`**Building English Vocabulary!** 📖\n\n**50 Most Useful Daily Words:**\n\n🏠 **At Home:** house, kitchen, bedroom, bathroom, garden, furniture\n🏢 **At Work:** meeting, project, deadline, report, email, client, manager\n🛒 **Shopping:** price, discount, receipt, payment, exchange, refund\n🚗 **Travel:** ticket, platform, departure, arrival, booking, journey\n💊 **Health:** doctor, medicine, appointment, symptoms, treatment, hospital\n\n**Power Words for Work:**\n- **Urgent** — needing immediate attention\n- **Deadline** — last date to complete something\n- **Feedback** — opinion/review of work\n- **Collaborate** — work together\n- **Escalate** — raise to higher authority\n- **Resolution** — solution to a problem\n- **Implement** — put into action\n\n**Tip:** Learn 5 new words every day! Write them in a notebook with their meaning and a sentence. In 6 months you'll know 900 new words! 🌟`},
+
+  // ── TECH ──
+  {t:['production support','ps team','sla','incident','ticket','rca','root cause','escalation','p1','p2','p3','monitoring','helpdesk','service desk'],
+   r:`**Production Support Team** 🔧\n\nPS team keeps ALL systems running 24/7 — the backbone of every tech company!\n\n**What PS Engineers do daily:**\n- Monitor systems, servers, applications\n- Investigate and fix production incidents\n- Root Cause Analysis (RCA) — find WHY it broke\n- Manage SLA (Service Level Agreements)\n- Escalate unsolvable issues to Dev team\n- Document everything for team knowledge\n- On-call rotation for after-hours support\n\n**Priority Levels:**\n🔴 **P1** — CRITICAL! System DOWN. Respond in 30 mins!\n🟠 **P2** — High impact. Respond in 2 hours\n🟡 **P3** — Medium impact. Respond in 24 hours\n🟢 **P4** — Low impact. Respond in 48 hours\n\n**Investigation Steps:**\n1. Reproduce the issue\n2. Check logs (PaperTrail, CloudWatch, Kibana)\n3. Query database for clues\n4. Check recent deployments\n5. Fix → Test → Close → Document\n\n**Key Tools:** JIRA, MySQL, AWS, New Relic, PaperTrail, Postman, PGAdmin`},
+
+  {t:['software developer','what does developer do','developer job','frontend developer','backend developer','full stack','programmer','coding','programming'],
+   r:`**Software Developer Roles** 💻\n\n**Frontend Developer** 🎨\nBuilds what you SEE — buttons, pages, designs\nTools: HTML, CSS, JavaScript, React, Angular, Vue\n\n**Backend Developer** ⚙️\nBuilds what POWERS the app — logic, databases, APIs\nTools: Java, Python, Node.js, SQL, REST APIs\n\n**Full Stack Developer** 🔄\nDoes BOTH frontend + backend. Very in-demand!\n\n**Mobile Developer** 📱\nBuilds apps for phones\niOS: Swift/Objective-C | Android: Kotlin/Java\nCross-platform: Flutter, React Native\n\n**DevOps Engineer** 🚀\nManages deployments, servers, cloud infrastructure\nTools: Docker, Kubernetes, Jenkins, AWS, Terraform\n\n**QA Engineer** 🧪\nTests software to find bugs before users do\nTools: Selenium, Postman, JIRA, TestNG\n\n**Career Path:**\nJunior (0-2 yrs) → Mid (2-5 yrs) → Senior (5+ yrs) → Tech Lead → Architect → CTO`},
+
+  {t:['what is python','learn python','python programming','python basics','python language'],
+   r:`**Python Programming** 🐍\n\nPython is one of the EASIEST and most POWERFUL languages!\n\n**Why Python is amazing:**\n- Simple English-like syntax\n- Used in AI/ML, Data Science, Web Dev, Automation\n- Huge community and libraries\n- Used by Google, Netflix, Instagram, NASA!\n\n**Python Basics:**\n\`\`\`python\n# Print something\nprint("Hello World!")\n\n# Variables\nname = "Vidya"\nage = 25\n\n# Simple math\nresult = 10 + 5  # 15\n\n# If condition\nif age > 18:\n    print("Adult")\nelse:\n    print("Minor")\n\n# Loop\nfor i in range(5):\n    print(i)  # prints 0,1,2,3,4\n\`\`\`\n\n**What Python is used for:**\n🤖 AI & Machine Learning (TensorFlow, PyTorch)\n📊 Data Analysis (Pandas, NumPy)\n🌐 Web Dev (Django, Flask)\n⚡ Automation (scripts, bots)\n\n**Start learning:** python.org, freeCodeCamp, Codecademy — all free!`},
+
+  {t:['what is ai','artificial intelligence','machine learning','deep learning','chatgpt','how does ai work','llm','neural network'],
+   r:`**Artificial Intelligence (AI)** 🤖\n\n**What is AI?**\nTeaching computers to THINK and LEARN like humans!\n\n**Simple explanation:**\nYou show a child 1000 photos of cats and dogs. They learn to identify them. AI does the SAME — learns from millions of examples!\n\n**Types of AI:**\n🤖 **Narrow AI** — Does ONE thing (like me! Answering questions)\n🧠 **General AI** — Human-level intelligence (doesn't exist yet!)\n\n**Machine Learning vs Deep Learning:**\n📊 **ML** — Learns patterns from data (spam filters, recommendations)\n🧠 **Deep Learning** — Complex neural networks (image recognition, voice assistants)\n\n**AI you use every day:**\n- YouTube recommendations (AI decides what to show you)\n- Google search (AI ranks results)\n- Autocorrect on phone (AI predicts words)\n- Spotify playlists (AI learns your taste)\n- ChatGPT, Claude (AI conversations — like me!)\n\n**AI is changing:** Healthcare, Finance, Education, Manufacturing, Transportation — EVERY industry!`},
+
+  // ── HEALTH ──
+  {t:['how to stay healthy','healthy habits','good health','wellness tips','stay fit','healthy lifestyle','immune system','energy boost'],
+   r:`**How to Stay Healthy & Feel Amazing!** 💪\n\n**The 5 Pillars of Health:**\n\n😴 **Sleep (Most important!)**\n- 7-9 hours EVERY night\n- Same sleep/wake time even weekends\n- No phone 30 mins before bed\n- Dark, cool room = best sleep\n\n🥗 **Eat Well**\n- Half plate = vegetables/fruits\n- Protein with every meal (eggs, lentils, chicken, tofu)\n- Drink 8-10 glasses of water daily\n- Limit sugar, processed foods, fried food\n\n💪 **Move Your Body**\n- 30 minutes of ANY movement daily\n- Walk after meals (helps digestion AND blood sugar)\n- Stairs > elevator always!\n- Weekend exercise: swimming, cycling, sports\n\n🧘 **Manage Stress**\n- 10 minutes meditation daily (try headspace/calm app)\n- Deep breathing when stressed (4-7-8 method)\n- Talk to someone — don't bottle up emotions\n- Take breaks from screens\n\n🤝 **Social & Mental Health**\n- Maintain real friendships\n- Have a hobby you love\n- Laugh more — seriously, it's medicine!\n- Be kind to yourself (self-compassion matters!)`},
+
+  {t:['how to lose weight','weight loss','fat loss','diet for weight loss','reduce weight','slim down'],
+   r:`**Healthy Weight Loss Guide** 🏃‍♀️\n\n**The truth about weight loss:**\nCalories in < Calories out = Weight loss\nBut it's NOT just about counting calories!\n\n**What actually works:**\n\n🥗 **Eat Smarter (not less!):**\n- More protein (keeps you full longer)\n- More fiber (vegetables, whole grains)\n- Less sugar and processed food\n- Smaller plates (tricks the brain!)\n- Eat slowly — takes 20 mins to feel full\n\n💪 **Exercise that helps most:**\n- Walking 10,000 steps daily (huge impact!)\n- Strength training 3x/week (builds muscle = burns more fat)\n- Any cardio you ENJOY (you'll stick to it)\n\n🌙 **The hidden factors:**\n- Bad sleep = weight gain (hormones go haywire)\n- Stress = weight gain (cortisol stores fat)\n- Dehydration = you think you're hungry when thirsty!\n\n**Simple daily goal:**\n✅ Drink water before every meal\n✅ Walk 30 minutes\n✅ Sleep 7+ hours\n✅ Eat vegetables first, then rest\n\n⚠️ *Avoid crash diets — they backfire! Slow, steady = permanent!*`},
+
+  {t:['headache','back pain','stomach pain','fever','cold','cough','how to treat','home remedy','first aid','common illness'],
+   r:`**Common Health Issues & Home Remedies** 🩺\n\n**Headache:**\n- Drink water first (most headaches = dehydration!)\n- Rest in dark quiet room\n- Cold/warm compress on forehead\n- Gentle neck/shoulder massage\n- See doctor if severe or frequent\n\n**Common Cold:**\n- Rest, rest, rest!\n- Warm liquids — ginger tea, honey lemon water\n- Saline nasal rinse\n- Steam inhalation\n- Vitamin C (oranges, guava)\n\n**Fever:**\n- Stay hydrated\n- Light cool clothing\n- Luke warm cloth on forehead\n- Paracetamol if needed\n- See doctor if above 103°F / 39.4°C\n\n**Back Pain:**\n- Don't stay in bed! Gentle movement helps\n- Ice first 48hrs, then warm compress\n- Stretching and walking\n- Check your posture at desk\n- See doctor if sharp, shooting or with numbness\n\n**Stomach Pain:**\n- Small sips of water\n- Avoid solid food for a few hours\n- Ginger tea or ajwain water\n- See doctor if severe or with vomiting/blood\n\n⚠️ *I share general info. Always consult a doctor for serious symptoms!*`},
+
+  // ── CAREER ──
+  {t:['how to get job','find job','job search','job hunting','how to find work','get hired','job tips','apply for job'],
+   r:`**How to Get Your Dream Job!** 🎯\n\n**Step-by-Step Job Search:**\n\n📋 **1. Prepare Your Resume**\n- 1-2 pages max\n- Quantify achievements ("Reduced ticket time by 40%")\n- Keywords from the job description\n- Clean, ATS-friendly format\n\n🔍 **2. Find Jobs**\n- LinkedIn (most powerful!)\n- Naukri, Indeed, Glassdoor\n- Company websites directly\n- Your NETWORK (most jobs aren't posted!)\n\n🤝 **3. Network Actively**\n- Connect with people on LinkedIn\n- Attend industry events/webinars\n- Reach out to alumni from your college\n- Inform friends/family you're looking\n\n✉️ **4. Apply Smart**\n- Customize your resume for each job\n- Write a compelling cover letter\n- Apply within 24hrs of posting\n\n🎤 **5. Nail the Interview**\n- Research the company thoroughly\n- Prepare STAR method stories\n- Ask smart questions\n- Follow up with thank you email\n\n💰 **6. Negotiate Salary**\n- Research market rate first\n- Never accept first offer\n- Negotiate total package (not just base)`},
+
+  {t:['salary negotiation','how to ask for hike','salary hike','negotiate salary','increase salary','how to get promotion','promotion tips'],
+   r:`**Salary Negotiation & Getting a Promotion** 💰\n\n**Salary Negotiation (New Job):**\n\n✅ **Before the conversation:**\n- Research market rate (Glassdoor, LinkedIn, Naukri)\n- Know your minimum acceptable salary\n- Know your target salary (ask 15-20% above)\n\n✅ **During negotiation:**\n- Let them make the first offer\n- Never give a number first if possible\n- When they give number, pause — say "I was expecting something closer to X based on my research and experience"\n- Silence is your friend after quoting!\n- Negotiate total package (bonus, insurance, WFH, leaves)\n\n✅ **Power phrases:**\n- "Based on my research and 5 years experience, I was expecting [X]"\n- "Is there flexibility in the budget?"\n- "I'm very excited about this role and want to make this work"\n\n**Getting Promoted:**\n🔥 Make your impact visible — document wins with numbers\n🔥 Volunteer for challenging projects\n🔥 Build relationships with senior stakeholders\n🔥 Ask your manager "What do I need to do to get promoted?"\n🔥 Get a mentor in the organization`},
+
+  // ── BANKING ──
+  {t:['how bank works','banking basics','what is bank','savings account','fixed deposit','fd','loan','credit card','emi','upi','neft','rtgs'],
+   r:`**Banking Made Simple!** 🏦\n\n**Types of Bank Accounts:**\n💳 **Savings Account** — Everyday money, earns interest (2-4%)\n💼 **Current Account** — For businesses, no limit on transactions\n🏦 **Fixed Deposit (FD)** — Lock money 6months-5yrs, earn 6-7% interest\n📅 **Recurring Deposit (RD)** — Save fixed amount monthly + interest\n\n**Money Transfer Methods (India):**\n📱 **UPI** — Instant, 24/7 (GPay, PhonePe, Paytm)\n🔄 **IMPS** — Instant, up to ₹5 lakh\n📋 **NEFT** — Settled in batches, free\n⚡ **RTGS** — Real-time, ₹2 lakh minimum\n\n**Loans Explained:**\n🏠 Home Loan: 7-9% interest, 20-30 year tenure\n🎓 Education Loan: 8-10%, moratorium during study\n🚗 Car Loan: 8-11% interest\n💳 Personal Loan: 11-20% (most expensive!)\n\n**Golden Rules:**\n✅ Build emergency fund (6 months expenses) first\n✅ Never spend more than you earn\n✅ Pay credit card FULLY every month\n✅ Check bank statement monthly for fraud\n✅ Never share OTP/PIN with ANYONE`},
+
+  // ── INVESTING ──
+  {t:['how to invest','investing for beginners','mutual fund','sip','stock market','shares','where to invest','investment tips','how to save money'],
+   r:`**Investing for Beginners** 📈\n\n**Why you MUST invest:**\nIf inflation is 6% and your savings account gives 3% — you're LOSING money every year! Investing beats inflation.\n\n**Investment options (risk level):**\n\n🟢 **Low Risk (Safe):**\n- PPF (Public Provident Fund) — 7.1%, tax-free!\n- EPF — Employer PF, great returns\n- FD — Fixed Deposit, 6-7%\n- Government Bonds\n\n🟡 **Medium Risk (Balanced):**\n- Mutual Funds (Debt funds) — 8-10%\n- Balanced/Hybrid Funds\n\n🔴 **Higher Risk (Higher Return):**\n- Equity Mutual Funds — 12-15% long term\n- Index Funds (NIFTY 50) — low cost, excellent!\n- Direct Stocks — need knowledge\n\n**SIP — The Magic of Investing!**\n₹5000/month in mutual fund:\n- After 10 years = ₹11.6 lakh (at 12%)\n- After 20 years = ₹49.4 lakh!\n- After 30 years = ₹1.76 CRORE! 🤯\n\n**Start here:** PPF + Index Fund SIP = perfect beginner combo!\n\n⚠️ *This is education, not financial advice. Consult a SEBI-registered advisor!*`},
+
+  // ── E-COMMERCE ──
+  {t:['how to sell online','start online business','ecommerce','amazon seller','flipkart seller','dropshipping','online shop','sell products'],
+   r:`**How to Start Selling Online** 🛒\n\n**Option 1: Sell on Marketplace (Easiest!)**\n- Amazon, Flipkart, Meesho, Myntra\n- Already have millions of buyers\n- They handle payment, returns\n- You just need: product + GST number\n\n**Option 2: Your Own Website**\n- More control, better margins\n- Use Shopify (easiest), WooCommerce, or hire developer\n- Need: Domain, hosting, payment gateway\n\n**Option 3: Social Commerce**\n- Instagram/Facebook Shop\n- WhatsApp Business catalog\n- Very low investment to start!\n\n**Steps to start:**\n1. Choose what to sell (your passion + market demand)\n2. Source product (manufacturer, wholesaler, or make yourself)\n3. Register GST (required for most platforms)\n4. Create seller account\n5. Upload products with GREAT photos and description\n6. Price competitively\n7. Deliver fast, respond to reviews\n\n**What sells well in India:**\nClothing, Electronics accessories, Home decor, Beauty products, Health/wellness, Books, Handmade crafts`},
+
+  // ── PERSONAL FINANCE ──
+  {t:['how to save money','money saving tips','budgeting','personal finance','manage money','no money','broke','financial tips'],
+   r:`**Smart Money Management** 💸\n\n**The 50-30-20 Rule:**\n💰 **50%** — Needs (rent, food, bills, transport)\n🎉 **30%** — Wants (entertainment, eating out, shopping)\n🏦 **20%** — Savings + Investments\n\n**Money saving hacks:**\n✅ Pay yourself first — invest before spending!\n✅ Track every expense for 1 month (eye-opening!)\n✅ Cancel subscriptions you don't use\n✅ Cook at home more than eating out\n✅ Buy in bulk for daily-use items\n✅ Wait 24 hours before any non-essential purchase\n✅ Negotiate your bills (internet, insurance etc)\n\n**Emergency Fund (Non-negotiable!):**\nBuild 3-6 months of expenses in a liquid account\nThis is your safety net for job loss, medical emergency etc.\n\n**Common money mistakes:**\n❌ No budget → money disappears\n❌ Credit card minimum payment only → debt trap!\n❌ No emergency fund → crisis becomes disaster\n❌ Lifestyle inflation with every raise\n❌ Investing what's "left" (nothing left!)\n\n**Start today:** Track expenses for 30 days. You'll find where money is leaking!`},
+
+  // ── MOTIVATION ──
+  {t:['motivate me','i need motivation','give me motivation','inspire me','i feel like giving up','how to stay motivated','feeling lazy','no motivation','demotivated'],
+   r:["Let me tell you something true 🔥\n\nYou wouldn't be asking for motivation if you had completely given up. The fact that you're here, seeking, trying — that IS motivation. That spark is still in you.\n\nHere's what I want you to remember:\n\n💪 **Progress is not linear.** Bad days, bad weeks — they're part of the journey, not proof you're failing.\n\n🌱 **You are a work in progress.** Not a finished product. Every day you're becoming better than yesterday.\n\n⚡ **Action creates motivation, not the other way around.** You don't wait to feel motivated — you START, and motivation follows.\n\n🎯 **One small step today.** Not the whole journey. Just today's step. What's ONE thing you can do in the next 10 minutes?\n\nI believe in you. Not because I have to — but because you reached out. And that takes strength. 💙",
+      "You know what? I think you're stronger than you feel right now 💪\n\nRemember:\n🌟 Thomas Edison failed 1000 times before the lightbulb\n🌟 J.K. Rowling was rejected 12 times before Harry Potter\n🌟 Steve Jobs was FIRED from Apple — then came back and saved it\n\nYour chapter isn't over. You're just in the hard part of the story. The best is still coming. Now — what's the specific thing you're struggling with? Let's tackle it together! 🔥"]},
+
+  // ── FOOD & COOKING ──
+  {t:['how to cook','recipe','cooking tips','easy recipe','beginner cooking','how to make','what to cook','food recipe','pasta','rice','chicken','vegetables','breakfast'],
+   r:`**Cooking for Beginners!** 🍳\n\n**Must-know basic techniques:**\n\n🔥 **Boiling** — Put in water, heat until bubbles\n🍳 **Frying** — Cook in oil/butter on medium heat\n♨️ **Sautéing** — Quick cook in little oil, high heat\n🫕 **Simmering** — Low heat, slow cooking in liquid\n🔄 **Steaming** — Cook with steam (healthy!)\n\n**3 Super Easy Recipes:**\n\n🍳 **Scrambled Eggs (5 mins)**\n- 2 eggs + pinch of salt + butter\n- Beat eggs, pour in hot pan, stir slowly\n- Remove when still slightly wet (they finish cooking)\n\n🍚 **Perfect Rice**\n- 1 cup rice : 2 cups water\n- Boil water, add rice, cover, simmer 15 mins\n- Don't open the lid while cooking!\n\n🍝 **Simple Pasta**\n- Boil water + salt, add pasta 8-10 mins\n- In pan: garlic + olive oil + tomato sauce\n- Mix drained pasta into sauce\n- Add cheese on top!\n\n**Golden cooking rules:**\n✅ Read full recipe BEFORE starting\n✅ Prep everything before you start cooking (mise en place)\n✅ Taste as you go\n✅ Medium heat is your friend — not high!`},
+
+  // ── TRAVEL ──
+  {t:['travel tips','how to travel','budget travel','trip planning','visa','passport','packing tips','solo travel','best places to visit','travel advice'],
+   r:`**Travel Guide for Everyone!** ✈️\n\n**Planning your trip:**\n📅 Book 2-3 months early for best prices\n🌤️ Research best season to visit\n📄 Visa requirements — check early!\n🏥 Travel insurance — NEVER skip this\n💱 Notify your bank before traveling\n\n**Packing smart:**\n✅ Roll clothes (saves 30% space!)\n✅ Carry-on only for trips under 1 week\n✅ Universal adapter + power bank\n✅ Offline maps downloaded before you go\n✅ Emergency contacts on paper (not just phone)\n✅ Basic medicines + first aid\n\n**Save money while traveling:**\n- Travel off-season (30-50% cheaper!)\n- Book flights Tuesday/Wednesday\n- Eat where locals eat (better + cheaper!)\n- Walk instead of taxis when possible\n- Free walking tours in most cities\n- Hostel/guesthouse over hotels\n\n**Beautiful places in India to start:**\n🏔️ Himachal Pradesh | 🌴 Kerala backwaters | 🏜️ Rajasthan\n🌊 Goa beaches | 🗺️ Ladakh | 🌿 Coorg, Karnataka\n\n**International destinations easy for Indians:**\n🇹🇭 Thailand | 🇸🇬 Singapore | 🇦🇪 Dubai | 🇳🇵 Nepal | 🇧🇹 Bhutan | 🇸🇷 Sri Lanka`},
+
+  // ── SCIENCE ──
+  {t:['why is sky blue','how does rain form','what is gravity','how does sun work','science question','explain science','physics','chemistry','biology','space facts','planet','universe'],
+   r:`**Science Made Fun!** 🔬🌌\n\n**Why is the sky blue?**\nSunlight contains ALL colors. When it hits Earth's atmosphere, blue light scatters more than other colors (because it has shorter wavelengths). So we see blue everywhere! At sunset, light travels further so blue scatters away and we see red/orange.\n\n**How does rain form?**\n1. Sun heats water → evaporates to vapor\n2. Warm air rises, cools up high\n3. Water vapor condenses into clouds (tiny water droplets)\n4. Droplets combine, get heavy → RAIN! 🌧️\n\n**What is gravity?**\nEverything with MASS pulls everything else toward it. Earth is so big, it pulls you toward its center — that's why you don't float away! Fun fact: You pull Earth toward you too (just much weaker!)\n\n**Mind-blowing space facts:**\n🌌 Universe is 13.8 BILLION years old\n⭐ More stars exist than grains of sand on all Earth's beaches\n☀️ Light from the Sun takes 8 minutes to reach Earth\n🌑 There's no sound in space (no air to carry sound waves)\n🕳️ Time moves slower near black holes (Einstein proved this!)\n\n**Ask me any science question! I love this stuff! 🚀**`},
+
+  // ── HISTORY ──
+  {t:['india history','world history','historical facts','ancient india','freedom fighters','independence','mughal','british','world war','historical event'],
+   r:`**History — The Story of Us!** 📜\n\n**India's Freedom Story:**\n🇮🇳 India was under British rule for ~200 years (1757-1947)\n✊ **Key Freedom Fighters:**\n- Mahatma Gandhi — Non-violent resistance, Dandi March\n- Subhas Chandra Bose — "Give me blood, I'll give you freedom"\n- Bhagat Singh — Revolutionary, hanged at 23\n- B.R. Ambedkar — Constitution architect, fought for equality\n- Rani Lakshmibai — Warrior queen of Jhansi\n\n📅 **15 August 1947** — India became independent!\n\n**World History highlights:**\n🏛️ Ancient civilizations: Egypt (3100 BC), Mesopotamia, Indus Valley, Greece, Rome\n⚔️ **World War 1** (1914-1918) — 20 million died\n💣 **World War 2** (1939-1945) — 70-85 million died. Ended with atomic bombs on Japan.\n🌍 **Cold War** (1947-1991) — USA vs USSR, space race, nuclear tension\n📱 **Digital Revolution** (1990s-now) — Internet changed everything!\n\n**Fun history facts:**\n- Cleopatra lived closer in time to the Moon landing than to the pyramids being built!\n- Oxford University is older than the Aztec Empire!`},
+
+  // ── FOOD CULTURE ──
+  {t:['indian food','different cuisines','best food','street food','healthy food','junk food','nutrition in food','what to eat'],
+   r:`**Food Around the World!** 🍽️\n\n**India's incredible food diversity:**\n🌶️ **North Indian** — Butter chicken, naan, biryani, chaat\n🥥 **South Indian** — Dosa, idli, sambar, Kerala fish curry\n🐟 **Bengali** — Hilsa fish, rasgulla, mishti doi\n🥬 **Gujarati** — Dhokla, thepla, undhiyu (mostly veg!)\n🍢 **Rajasthani** — Dal baati churma, gatte ki sabzi\n\n**World cuisines you should try:**\n🍜 **Japanese** — Sushi, ramen, miso soup (very healthy!)\n🍕 **Italian** — Pizza, pasta, risotto\n🥙 **Middle Eastern** — Hummus, falafel, shawarma\n🌮 **Mexican** — Tacos, burritos, guacamole\n🍲 **Thai** — Pad thai, green curry, tom yum soup\n\n**Healthiest foods in the world:**\n🫐 Blueberries | 🥑 Avocado | 🐟 Salmon | 🥦 Broccoli\n🧄 Garlic | 💛 Turmeric | 🟢 Lentils | 🌰 Walnuts\n\n**Indian superfoods you already have:**\n- Turmeric — anti-inflammatory\n- Amla — Vitamin C king\n- Ghee — brain food\n- Coconut — antimicrobial\n- Moringa — nutrient powerhouse`},
+
+  // ── RELATIONSHIPS ──
+  {t:['relationship advice','how to talk to someone','communication','friendship','love','marriage','family problem','conflict','how to say sorry','how to make friends'],
+   r:`**Relationships & Human Connection** ❤️\n\n**What makes any relationship strong:**\n\n💬 **Communication** — The foundation of everything\n- Say what you feel (don't expect mind reading!)\n- Listen to understand, not to reply\n- Check in regularly — "How are you really doing?"\n\n🤝 **Respect** — Non-negotiable\n- Respect differences — you don't have to agree on everything\n- Never belittle or dismiss feelings\n- Boundaries are healthy, not walls\n\n⏰ **Quality time** — Being present, not just there\n- Put the phone down\n- Remember important things about them\n- Celebrate their wins, big and small\n\n**How to make friends:**\n✅ Show genuine interest in THEM (people love this)\n✅ Remember details they shared, ask follow-up later\n✅ Initiate — don't always wait for others\n✅ Be reliable — do what you say\n✅ Shared activities (classes, sports, volunteering)\n\n**How to say sorry properly:**\n1. Acknowledge what you did ("I was wrong to...")\n2. Take responsibility (no "but" excuses!)\n3. Show you understand impact ("I know that made you feel...")\n4. Commit to change\n5. Give them time to process`},
+
+  // ── MISC ──
+  {t:['fun fact','interesting fact','did you know','surprise me','something interesting','tell me something'],
+   r:["🎉 **Fun fact time!** Did you know that honey NEVER spoils? Archaeologists found 3000-year-old honey in Egyptian tombs and it was still edible! Bees are absolute legends! 🍯",
+      "🤯 **Mind-blowing fact!** Octopuses have THREE hearts, BLUE blood, and can change color even though they're colorblind! They also have neurons in their arms — each arm can think independently!",
+      "🌌 **Space is wild!** A day on Venus (the time to rotate once) is LONGER than its year (time to orbit the Sun). So on Venus, you'd see the Sun rise about twice a year!",
+      "🧠 **Brain fact!** Your brain generates enough electricity to power a small LED bulb! And it uses about 20% of your body's total energy — even though it's only 2% of your weight!",
+      "🐘 **Animal fact!** Elephants are the only animals that can't jump! But they can swim, run at 25 mph, and console grieving friends — they show deep empathy and even have funerals for loved ones!"]},
+
+  {t:['joke','make me laugh','something funny','cheer me up','funny'],
+   r:["😄 Here's one for you!\n\nWhy do programmers prefer dark mode?\n**Because light attracts bugs!** 🐛\n\nOk ok, one more:\nWhy did the developer go broke?\n**Because he used up all his cache!** 💸\n\nDid that help? 😄",
+      "😂 Okay here goes:\n\nA SQL query walks into a bar, walks up to two tables and asks...\n**'Can I JOIN you?'** 😄\n\nAnd a classic:\nWhy do Java developers wear glasses?\n**Because they can't C#!** 🤓",
+      "😄 A little laugh for you!\n\nI told my cat a joke about dogs.\nHe didn't laugh.\n**He said it was too ruff.** 🐾\n\nHow about that? Better? 😊"]},
+
+  {t:['good night','good morning','good afternoon','have a good day','take care'],
+   r:["Good night! 🌙 Sleep well and wake up refreshed! Remember — tomorrow is a new chance to make great things happen. Sweet dreams! 💫",
+      "Good morning! ☀️ What a wonderful day it's going to be! I hope your day is filled with good moments and great achievements! What are we working on today? 😊",
+      "Have a wonderful day! 🌟 Go out there and make it count! Remember — I'm here whenever you need me. Take care! 💙"]},
+
+  {t:['who made you','who created you','who built you','who is your creator','tell me about your creator','vidya rani'],
+   r:`I was created by **Vidya Rani** ✨\n\nShe is a **Production Support Engineer** and **AI Automation Specialist** from Bengaluru, India 🇮🇳\n\nWhat makes her special:\n- 5+ years of experience in production support across Healthcare SaaS, Banking, E-Commerce, and Retail\n- Built an AI-powered investigation tool that reduced 9-hour work to just 5 minutes!\n- Created 15+ analytics dashboards used by VP-level leadership\n- Passionate about AI, automation, and making technology helpful for everyone\n\nShe built ME because she believes AI should be accessible to everyone — not just tech people! Whether you're a student, professional, homemaker, or entrepreneur — I'm here for ALL of you! 🌍\n\n**Connect with her:**\n🔗 GitHub: github.com/vidyachoki\n💼 LinkedIn: linkedin.com/in/vidya-rani-b31a06358`},
+
+  {t:['thank','thanks','thank you','appreciate','helpful','you helped','great answer','amazing'],
+   r:["Aww, that makes me SO happy! 🥰 Helping you is literally my favorite thing! Don't hesitate to ask anything else anytime — day or night, I'm here! 💙",
+      "You're so welcome! 😊 That genuinely made my day! Come back anytime — I'm always here for you!",
+      "My pleasure, truly! ✨ This is what I'm here for! What else can we explore? 😊"]},
+
+  {t:['bye','goodbye','see you','cya','take care','good bye','talk later'],
+   r:["Goodbye! 👋 It was SO lovely talking with you! Come back anytime — I'll be right here! Take care of yourself! 💙",
+      "Bye bye! 🌟 You're amazing — go have the most wonderful day! I'll miss our chat! Come back soon! ✨",
+      "See you soon! 💫 Remember — whatever you're going through, you've got this! And I'm always here when you need me! 👋"]},
+
+  {t:['who are you','what are you','your name','introduce yourself','what can you do'],
+   r:`I'm **Vidya** ✨ — your personal AI Friend, Mentor, Guide & Knowledge Partner!\n\nI was created by **Vidya Rani**, a Production Support Engineer & AI Specialist from India 🇮🇳\n\n**What I can help you with:**\n\n🗣️ **English Learning** — Grammar, vocabulary, conversation practice\n💻 **IT & Tech** — Development, Production Support, DevOps, AI, Cybersecurity\n🏢 **Business** — Company structure, HR, Sales, Finance, Startups\n🏥 **Healthcare** — Health tips, mental wellness, nutrition, fitness\n🏦 **Banking & Finance** — Banking, investing, crypto, personal finance\n🛒 **E-Commerce** — Online selling, digital marketing\n🎓 **Career** — Job search, resume, salary negotiation, growth\n🌱 **Personal** — Motivation, relationships, productivity, travel\n🌍 **World** — Science, history, food, culture, sports\n💬 **Just chat** — I'm your friend too!\n\nMost importantly — I'm here as your FRIEND. Not just an information machine. Talk to me! 😊`}
+];
+
+// ════════════════
+// SMART MATCHER
+// ════════════════
+function getBotResponse(input) {
+  const q = input.toLowerCase().trim();
+
+  // FAQ first
+  if (faqData.length > 0) {
+    const fm = searchFAQ(q);
+    if (fm) return `📄 **From your document:**\n\n**Q: ${fm.q}**\n\n${fm.a}`;
+  }
+
+  // Score each knowledge entry
+  const words = q.split(/\s+/).filter(w => w.length > 2);
+  let bestEntry = null, bestScore = 0;
+
+  for (const entry of BRAIN) {
+    let score = 0;
+    for (const trigger of entry.t) {
+      if (q === trigger || q.includes(trigger)) {
+        score += trigger.split(' ').length * 3; // Longer matches score higher
+      }
+      for (const w of words) {
+        if (trigger.includes(w) || w.includes(trigger)) score += 1;
+      }
+    }
+    if (score > bestScore) { bestScore = score; bestEntry = entry; }
+  }
+
+  if (bestScore >= 2 && bestEntry) {
+    const r = bestEntry.r;
+    if (Array.isArray(r)) return r[Math.floor(Math.random() * r.length)];
+    return r;
+  }
+
+  // Smart fallback — actually answer something useful!
+  if (q.includes('what is') || q.includes('what are') || q.includes('define')) {
+    const topic = q.replace(/what is |what are |define /g,'').trim();
+    return `Great question about **"${topic}"**! 🤔\n\nHere's what I know: ${topic} is a concept that's important in its field. Let me give you the most useful explanation:\n\n${topic} refers to a specific subject, process, or idea that people learn about and apply in real life. \n\nTo give you a MORE specific and accurate answer, could you tell me:\n- Is this related to **technology, business, health, finance, or something else?**\n- What do you specifically want to know about it?\n\nI want to give you the BEST answer, not a vague one! 😊`;
+  }
+
+  if (q.includes('how to') || q.includes('how do') || q.includes('how can')) {
+    const action = q.replace(/how to |how do i |how can i /g,'').trim();
+    return `I want to teach you **how to ${action}**! 💡\n\nHere's a general framework:\n\n**Step 1:** Understand what you want to achieve\n**Step 2:** Break it into smaller steps\n**Step 3:** Start with the easiest step first\n**Step 4:** Practice consistently\n**Step 5:** Get feedback and improve\n\nFor a more specific and accurate answer, tell me more about your situation:\n- What's your current level of experience?\n- What's your goal?\n- What resources do you have?\n\nThe more you tell me, the better I can help! 😊`;
+  }
+
+  // Final fallback
+  const fallbacks = [
+    `That's a great topic! 😊 I want to make sure I give you the most accurate answer.\n\nCould you be a little more specific? For example:\n- Are you asking about this for work, personal life, or studies?\n- What specific aspect are you curious about?\n\nI cover: 🗣️ English · 💻 IT & Tech · 🏢 Business · 🏥 Health · 🏦 Banking · 🛒 E-Commerce · 🎓 Career · 🌱 Personal Life · 🌍 World topics\n\nJust ask anything — I'll do my best! 💙`,
+    `Interesting! I'm thinking about the best way to answer this for you... 🤔\n\nTell me a bit more context and I'll give you a really useful answer! What specifically do you want to know or do? I'm here to actually help, not just give vague responses! 😊`
+  ];
+  return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+}
+
+// ════════════════
+// FAQ DOCUMENT
+// ════════════════
+function loadDoc(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    docContent = ev.target.result;
+    faqData = parseFAQ(docContent);
+    document.getElementById('dc').classList.add('show');
+    document.getElementById('dn').textContent = '📄 ' + f.name;
+    document.getElementById('di').textContent = faqData.length + ' Q&A loaded';
+    addBot(`📄 Loaded **${f.name}**! Found **${faqData.length}** entries. Ask me anything from it! 😊`);
+  };
+  r.readAsText(f);
+}
+
+function parseFAQ(text) {
+  const pairs = [];
+  const qp = /[Qq][:\.]?\s*(.+?)[\n\r]+[Aa][:\.]?\s*(.+?)(?=[\n\r]+[Qq][:\.]?|$)/gs;
+  let m;
+  while ((m = qp.exec(text)) !== null) pairs.push({q:m[1].trim(),a:m[2].trim()});
+  if (!pairs.length) {
+    const lines = text.split('\n').filter(l=>l.trim());
+    for (let i=0;i<lines.length-1;i+=2) if(lines[i]&&lines[i+1]) pairs.push({q:lines[i].trim(),a:lines[i+1].trim()});
+  }
+  return pairs;
+}
+
+function searchFAQ(q) {
+  if (!faqData.length) return null;
+  const words = q.split(' ').filter(w=>w.length>2);
+  let best=null,bs=0;
+  for (const item of faqData) {
+    const score = words.filter(w=>item.q.toLowerCase().includes(w)).length;
+    if (score>bs){bs=score;best=item;}
+  }
+  return bs>=Math.max(1,Math.floor(words.length*0.3))?best:null;
+}
+
+// ════════════════
+// UI
+// ════════════════
+function fmt(t) {
+  return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/`([^`]+)`/g,'<code style="background:rgba(99,102,241,0.15);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px;">$1</code>')
+    .replace(/\n\n/g,'<br/><br/>').replace(/\n- /g,'<br/>• ').replace(/\n(\d+\. )/g,'<br/>$1').replace(/\n/g,'<br/>');
+}
+
+function addBot(text) {
+  const m=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg bot';
+  d.innerHTML=`<div class="av">✨</div><div class="bubble">${fmt(text)}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+
+function addUser(text) {
+  const m=document.getElementById('msgs');
+  const w=document.getElementById('welcome');
+  if(w)w.remove();
+  const d=document.createElement('div');
+  d.className='msg user';
+  d.innerHTML=`<div class="av">😊</div><div class="bubble">${text}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+
+function showTyping() {
+  const m=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg bot';d.id='typ';
+  d.innerHTML=`<div class="av">✨</div><div class="bubble"><div class="tw"><span></span><span></span><span></span></div></div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+  return d;
+}
+
+function send() {
+  const i=document.getElementById('inp');
+  const t=i.value.trim();
+  if(!t)return;
+  i.value='';i.style.height='auto';
+  addUser(t);
+  const ty=showTyping();
+  setTimeout(()=>{ty.remove();addBot(getBotResponse(t));},300+Math.random()*500);
+}
+
+function askQ(q){document.getElementById('inp').value=q;send();}
+function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+
+function tog(el) {
+  const ch=el.nextElementSibling;
+  const open=ch.classList.contains('show');
+  document.querySelectorAll('.mc').forEach(c=>c.classList.remove('show'));
+  document.querySelectorAll('.mp').forEach(p=>p.classList.remove('open'));
+  if(!open){ch.classList.add('show');el.classList.add('open');}
+}
+
+function sel(el, topic) {
+  document.querySelectorAll('.mp,.mci').forEach(e=>e.classList.remove('act'));
+  el.classList.add('act');
+  const w=document.getElementById('welcome');
+  if(w)w.remove();
+  addBot(`Great! Let's talk about **${el.textContent.trim()}**! 😊 Ask me anything about this topic — I'm all yours!`);
+}
+</script>
+</body>
+</html>
